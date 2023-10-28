@@ -1,2 +1,4 @@
 # Ignore resulting binary
 lc3-vm
+
+src/*.o
