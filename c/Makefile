@@ -1,4 +1,4 @@
-TARGET ?= lc3-vm
+TARGET ?= lc3
 SRC_DIRS ?= ./src
 
 SRCS := $(shell find $(SRC_DIRS) -name *.c)
