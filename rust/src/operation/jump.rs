@@ -1,5 +1,5 @@
-use crate::registers::{Address, Registers};
 use crate::utils::sign_extend;
+use crate::vm::{Address, Registers};
 
 /// Jump
 ///
@@ -37,7 +37,7 @@ pub fn jump_sub_routine(instruction: u16, registers: &mut Registers) {
 mod tests {
     mod jump {
         use crate::operation::jump::jump;
-        use crate::registers::{Address, Registers};
+        use crate::vm::{Address, Registers};
 
         #[test]
         fn set_pc_to_r1_value() {

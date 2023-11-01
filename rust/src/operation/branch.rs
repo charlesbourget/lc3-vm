@@ -1,5 +1,5 @@
-use crate::registers::{Address, Registers};
 use crate::utils::sign_extend;
+use crate::vm::{Address, Registers};
 
 /// Branch operation
 ///
@@ -17,7 +17,7 @@ pub fn branch(instruction: u16, registers: &mut Registers) {
 mod tests {
     mod branch {
         use crate::operation::branch::branch;
-        use crate::registers::{Address, Registers};
+        use crate::vm::{Address, Registers};
 
         #[test]
         fn given_n_bit_match_should_increment_pc_with_pc_offset() {

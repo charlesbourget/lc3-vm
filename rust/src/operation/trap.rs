@@ -1,5 +1,4 @@
-use crate::memory::Memory;
-use crate::registers::{Address, Registers};
+use crate::vm::{Address, Memory, Registers};
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 

@@ -4,8 +4,7 @@ use crate::operation::jump::{jump, jump_sub_routine};
 use crate::operation::load::{load, load_effective_address, load_indirect, load_register};
 use crate::operation::math::add;
 use crate::operation::trap::trap;
-use crate::memory::Memory;
-use crate::registers::Registers;
+use crate::vm::{Memory, Registers};
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 

@@ -1,17 +1,14 @@
 #![feature(array_chunks)]
 
 mod operation;
-mod memory;
-mod registers;
 mod utils;
+mod vm;
 
-use crate::memory::Memory;
-use crate::registers::{Address, Registers};
+use crate::vm::{Address, Flag, Memory, Vm};
 use std::{env, fs, io, process::exit};
 
 fn main() {
-    let mut registers = Registers::new();
-    let mut memory = Memory::new();
+    let mut vm = Vm::new();
 
     let args: Vec<String> = env::args().collect();
 
@@ -22,7 +19,7 @@ fn main() {
     }
 
     for image_file in args.iter().skip(1) {
-        if read_image_file(image_file, &mut memory).is_err() {
+        if read_image_file(image_file, &mut vm.memory).is_err() {
             panic!("failed to load image: {:?}", image_file);
         }
     }
@@ -30,19 +27,20 @@ fn main() {
     // TODO: Handle interrupt signals
     // TODO: disable_input_buffering, do we need this?
 
-    registers.write_condition_flag_address(Address::Cond, registers::Flag::Zero);
+    vm.registers
+        .write_condition_flag_address(Address::Cond, Flag::Zero);
     // default start position
-    registers.write_address(Address::PC, 0x3000);
+    vm.registers.write_address(Address::PC, 0x3000);
 
     let mut running = true;
     while running {
         // Increment PC
-        let pc = registers.read_address(Address::PC) + 1;
-        registers.write_address(Address::PC, pc);
+        let pc = vm.registers.read_address(Address::PC) + 1;
+        vm.registers.write_address(Address::PC, pc);
         // Load operation
-        let instruction = memory.read(pc);
+        let instruction = vm.memory.read(pc);
         // Execute operation
-        running = operation::execute_instruction(instruction, &mut registers, &mut memory);
+        running = operation::execute_instruction(instruction, &mut vm.registers, &mut vm.memory);
     }
 
     // TODO: restore input buffering, do we need this?

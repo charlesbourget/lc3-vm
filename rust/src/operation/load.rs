@@ -1,6 +1,5 @@
-use crate::memory::Memory;
-use crate::registers::{Address, Registers};
 use crate::utils::sign_extend;
+use crate::vm::{Address, Memory, Registers};
 
 pub fn load_effective_address(instruction: u16, registers: &mut Registers) {
     let r0 = (instruction >> 9) & 0x7;

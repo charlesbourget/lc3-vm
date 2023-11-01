@@ -1,4 +1,3 @@
-use crate::registers::Address::Cond;
 use num_derive::FromPrimitive;
 
 #[derive(FromPrimitive)]
@@ -25,6 +24,48 @@ pub enum Flag {
 pub enum _MemoryMappedRegisters {
     Kbsr = 0xFE00,
     Kbdr = 0xFE02,
+}
+
+const MEMORY_MAX: usize = 1 << 16;
+
+pub struct Vm {
+    pub memory: Memory,
+    pub registers: Registers,
+}
+
+impl Vm {
+    pub fn new() -> Self {
+        Self {
+            memory: Memory::new(),
+            registers: Registers::new(),
+        }
+    }
+}
+
+pub struct Memory {
+    values: [u16; MEMORY_MAX],
+}
+
+impl Memory {
+    pub fn new() -> Self {
+        Memory {
+            values: [0; MEMORY_MAX],
+        }
+    }
+
+    pub fn _write(&mut self, address: u16, value: u16) {
+        self.values[address as usize] = value;
+    }
+
+    pub fn write_chunk(&mut self, address: u16, values: &[u16]) {
+        for (i, value) in values.iter().enumerate() {
+            self.values[(address + i as u16) as usize] = *value;
+        }
+    }
+
+    pub fn read(&self, address: u16) -> u16 {
+        self.values[address as usize]
+    }
 }
 
 pub struct Registers {
@@ -73,6 +114,6 @@ impl Registers {
             flag = Flag::Negative;
         }
 
-        self.write_condition_flag_address(Cond, flag);
+        self.write_condition_flag_address(Address::Cond, flag);
     }
 }

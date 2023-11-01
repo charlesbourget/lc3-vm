@@ -1,5 +1,5 @@
-use crate::registers::Registers;
 use crate::utils::sign_extend;
+use crate::vm::Registers;
 
 /// And operation
 ///
@@ -41,7 +41,7 @@ pub fn not(instruction: u16, registers: &mut Registers) {
 mod tests {
     mod and {
         use crate::operation::bitwise::and;
-        use crate::registers::{Address, Registers};
+        use crate::vm::{Address, Registers};
 
         #[test]
         fn given_immediate_flag_should_use_value() {
@@ -69,7 +69,7 @@ mod tests {
 
     mod not {
         use crate::operation::bitwise::not;
-        use crate::registers::{Address, Registers};
+        use crate::vm::{Address, Registers};
 
         #[test]
         fn negate_register_value() {

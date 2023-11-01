@@ -1,5 +1,5 @@
-use crate::registers::Registers;
 use crate::utils::sign_extend;
+use crate::vm::Registers;
 
 pub fn add(instruction: u16, registers: &mut Registers) {
     let r0 = (instruction >> 9) & 0x7;
@@ -23,7 +23,7 @@ pub fn add(instruction: u16, registers: &mut Registers) {
 mod tests {
     mod add {
         use crate::operation::math::add;
-        use crate::registers::{Address, Registers};
+        use crate::vm::{Address, Registers};
 
         #[test]
         fn given_immediate_flag_should_use_value() {
