@@ -22,7 +22,7 @@ pub enum Flag {
     Negative = 1 << 2,
 }
 
-pub enum MemoryMappedRegisters {
+pub enum _MemoryMappedRegisters {
     Kbsr = 0xFE00,
     Kbdr = 0xFE02,
 }
@@ -44,12 +44,15 @@ impl Registers {
         self.write(address as u16, value);
     }
 
-    pub fn write_condition_flag(&mut self, address: u16, value: Flag) {
-        self.write(address, value as u16);
-    }
-
     pub fn write_condition_flag_address(&mut self, address: Address, value: Flag) {
         self.write_address(address, value as u16);
+    }
+
+    pub fn increment_pc(&mut self, increment_value: u16) {
+        self.write_address(
+            Address::PC,
+            self.read_address(Address::PC) + increment_value,
+        );
     }
 
     pub fn read(&self, address: u16) -> u16 {

@@ -11,7 +11,7 @@ impl Memory {
         }
     }
 
-    pub fn write(&mut self, address: u16, value: u16) {
+    pub fn _write(&mut self, address: u16, value: u16) {
         self.values[address as usize] = value;
     }
 
