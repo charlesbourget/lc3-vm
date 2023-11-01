@@ -1,3 +1,4 @@
+use anyhow::{anyhow, Context, Error};
 use crate::operation::bitwise::{and, not};
 use crate::operation::branch::branch;
 use crate::operation::jump::{jump, jump_sub_routine};
@@ -39,8 +40,9 @@ pub fn execute_instruction(
     instruction: u16,
     registers: &mut Registers,
     memory: &mut Memory,
-) -> bool {
-    let operation: Operation = FromPrimitive::from_u16(instruction >> 12).unwrap();
+) -> Result<bool, Error> {
+    let operation: Operation = FromPrimitive::from_u16(instruction >> 12)
+        .with_context(|| format!("Invalid op code encountered {}", instruction & 0xFF))?;
 
     let mut running = true;
 
@@ -58,14 +60,12 @@ pub fn execute_instruction(
         Operation::Store => todo!(),
         Operation::StoreIndirect => todo!(),
         Operation::StoreRegister => todo!(),
-        Operation::ReturnFromInterrupt => todo!(),
-        Operation::Reserved => todo!(),
+        Operation::ReturnFromInterrupt => return Err(anyhow!("Illegal op code [ReturnFromInterrupt] used.")),
+        Operation::Reserved => return Err(anyhow!("Illegal op code [Reserved] used.")),
         Operation::Trap => {
-            if let Some(v) = trap(instruction, registers, memory) {
-                running = v;
-            }
+            running = trap(instruction, registers, memory)?;
         }
     }
 
-    running
+    Ok(running)
 }

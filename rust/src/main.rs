@@ -5,23 +5,21 @@ mod utils;
 mod vm;
 
 use crate::vm::{Address, Flag, Memory, Vm};
-use std::{env, fs, io, process::exit};
+use std::{env, fs, io};
+use anyhow::{anyhow, Context};
 
-fn main() {
+fn main() -> anyhow::Result<()>{
     let mut vm = Vm::new();
 
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 2 {
-        println!("lc3 [image-file] ...");
-
-        exit(2);
+        return Err(anyhow!("No image file provided. Usage: `lc3 [image-file] ...`"));
     }
 
     for image_file in args.iter().skip(1) {
-        if read_image_file(image_file, &mut vm.memory).is_err() {
-            panic!("failed to load image: {:?}", image_file);
-        }
+        read_image_file(image_file, &mut vm.memory)
+            .with_context(|| format!("Unable to read image file {}", image_file))?;
     }
 
     // TODO: Handle interrupt signals
@@ -40,10 +38,11 @@ fn main() {
         // Load operation
         let instruction = vm.memory.read(pc);
         // Execute operation
-        running = operation::execute_instruction(instruction, &mut vm.registers, &mut vm.memory);
+        running = operation::execute_instruction(instruction, &mut vm.registers, &mut vm.memory)?;
     }
 
     // TODO: restore input buffering, do we need this?
+    Ok(())
 }
 
 fn read_image_file(image_file: &str, memory: &mut Memory) -> Result<(), io::Error> {
