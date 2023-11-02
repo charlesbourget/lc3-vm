@@ -1,5 +1,5 @@
+use crate::vm::Vm;
 use anyhow::{Context, Error};
-use crate::vm::{Address, Memory, Registers};
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
@@ -13,15 +13,15 @@ pub enum TrapCode {
     Halt = 0x25,
 }
 
-pub fn trap(instruction: u16, registers: &mut Registers, memory: &Memory) -> Result<bool, Error> {
-    registers.write_address(Address::R7, registers.read_address(Address::PC));
+pub fn trap(instruction: u16, vm: &mut Vm) -> Result<bool, Error> {
+    vm.registers.r7 = vm.registers.pc;
     let trap_code: TrapCode = FromPrimitive::from_u16(instruction & 0xFF)
         .with_context(|| format!("Invalid trap code encountered {}", instruction & 0xFF))?;
 
     match trap_code {
         TrapCode::GetChar => todo!(),
         TrapCode::Out => todo!(),
-        TrapCode::PutS => puts(registers, memory),
+        TrapCode::PutS => puts(vm),
         TrapCode::In => todo!(),
         TrapCode::PutSP => todo!(),
         TrapCode::Halt => {
@@ -33,14 +33,14 @@ pub fn trap(instruction: u16, registers: &mut Registers, memory: &Memory) -> Res
     Ok(true)
 }
 
-fn puts(registers: &Registers, memory: &Memory) {
-    let string_start_address = registers.read_address(Address::R0);
+fn puts(vm: &Vm) {
+    let string_start_address = vm.registers.r0;
 
     let mut current_address = string_start_address + 1;
-    let mut character = memory.read(current_address);
+    let mut character = vm.memory.read(current_address);
     while character != 0x0000 {
         print!("{}", character as u8 as char);
         current_address += 1;
-        character = memory.read(current_address)
+        character = vm.memory.read(current_address)
     }
 }
